@@ -17,6 +17,27 @@ import { AgentManager } from './agent';
 import { FleetManager } from './fleet_server';
 import { getLatestAvailableAgentVersion } from '../defend_workflows_cypress/utils';
 
+export async function OsqueryConfigurableCypressTestRunner(
+  { getService }: FtrProviderContext,
+  envVars?: Record<string, string>
+) {
+  const config = getService('config');
+
+  return {
+    FORCE_COLOR: '1',
+    CYPRESS_BASE_URL: Url.format(config.get('servers.kibana')),
+    CYPRESS_ELASTICSEARCH_URL: Url.format(config.get('servers.elasticsearch')),
+    CYPRESS_ELASTICSEARCH_USERNAME: config.get('servers.elasticsearch.username'),
+    CYPRESS_ELASTICSEARCH_PASSWORD: config.get('servers.elasticsearch.password'),
+    ...envVars,
+    baseUrl: Url.format(config.get('servers.kibana')),
+    BASE_URL: Url.format(config.get('servers.kibana')),
+    ELASTICSEARCH_URL: Url.format(config.get('servers.elasticsearch')),
+    ELASTICSEARCH_USERNAME: config.get('servers.elasticsearch.username'),
+    ELASTICSEARCH_PASSWORD: config.get('servers.elasticsearch.password'),
+  };
+}
+
 async function withFleetAgent(
   { getService }: FtrProviderContext,
   runner: (runnerEnv: Record<string, string>) => Promise<void>
